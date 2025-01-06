@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useState, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type Todo = {
   id: string;
@@ -16,14 +16,14 @@ type Todo = {
 
 const TodoList = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState("");
 
   // Fetch all todos from the API
   useEffect(() => {
     const fetchTodos = async () => {
-      const res = await fetch('/api/todo');
+      const res = await fetch("/api/todo");
       const data = await res.json();
       setTodos(data);
     };
@@ -36,10 +36,10 @@ const TodoList = () => {
     e.preventDefault();
 
     const newTodo = { title, description, dueDate };
-    const res = await fetch('/api/todo', {
-      method: 'POST',
+    const res = await fetch("/api/todo", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(newTodo),
     });
@@ -47,34 +47,34 @@ const TodoList = () => {
     if (res.ok) {
       const createdTodo = await res.json();
       setTodos((prevTodos) => [...prevTodos, createdTodo]);
-      setTitle('');
-      setDescription('');
-      setDueDate('');
-      toast.success('Todo added successfully!');
+      setTitle("");
+      setDescription("");
+      setDueDate("");
+      toast.success("Todo added successfully!");
     } else {
-      toast.error('Failed to create todo');
+      toast.error("Failed to create todo");
     }
   };
 
   // Handle deleting a todo
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch('/api/todo', {
-        method: 'DELETE',
+      const res = await fetch("/api/todo", {
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ id }),
       });
 
       if (res.ok) {
         setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-        toast.success('Todo deleted successfully!');
+        toast.success("Todo deleted successfully!");
       } else {
-        toast.error('Failed to delete todo');
+        toast.error("Failed to delete todo");
       }
-    } catch (error) {
-      toast.error('An error occurred while deleting the todo');
+    } catch {
+      toast.error("An error occurred while deleting the todo");
     }
   };
 
@@ -83,7 +83,10 @@ const TodoList = () => {
       <h1 className="text-3xl font-bold mb-4">Todo List</h1>
 
       {/* Form to create a new todo */}
-      <form onSubmit={handleCreate} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md">
+      <form
+        onSubmit={handleCreate}
+        className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md"
+      >
         <input
           type="text"
           placeholder="Title"
@@ -117,28 +120,48 @@ const TodoList = () => {
         <table className="min-w-full table-auto">
           <thead className="bg-gray-200">
             <tr>
-              <th className="p-3 text-left text-sm font-semibold text-gray-700">Title</th>
-              <th className="p-3 text-left text-sm font-semibold text-gray-700">Description</th>
-              <th className="p-3 text-left text-sm font-semibold text-gray-700">Due Date</th>
-              <th className="p-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-700">
+                Title
+              </th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-700">
+                Description
+              </th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-700">
+                Due Date
+              </th>
+              <th className="p-3 text-left text-sm font-semibold text-gray-700">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
-            {todos.map((todo) => (
-              <tr key={todo.id} className="border-t">
-                <td className="p-3">{todo.title}</td>
-                <td className="p-3">{todo.description}</td>
-                <td className="p-3">{todo.dueDate ? new Date(todo.dueDate).toLocaleDateString() : 'N/A'}</td>
-                <td className="p-3">
-                  <button
-                    onClick={() => handleDelete(todo.id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
+            {Array.isArray(todos) ? (
+              todos.map((todo) => (
+                <tr key={todo.id} className="border-t">
+                  <td className="p-3">{todo.title}</td>
+                  <td className="p-3">{todo.description}</td>
+                  <td className="p-3">
+                    {todo.dueDate
+                      ? new Date(todo.dueDate).toLocaleDateString()
+                      : "N/A"}
+                  </td>
+                  <td className="p-3">
+                    <button
+                      onClick={() => handleDelete(todo.id)}
+                      className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="text-center p-3">
+                  No todos available.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
